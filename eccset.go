@@ -37,7 +37,7 @@ func GenPubkey(prikey []byte, typeChoose uint32) (pubkey []byte, ret uint16) {
 	case ECC_CURVE_CURVE25519_SHA256:
 		pubkey, err = eddsa.CURVE25519_sha256_genPub(prikey)
 		break
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		pubkey, err = genPublicKey(prikey, "secp256k1")
 		break
 	case ECC_CURVE_SECP256R1:
@@ -48,9 +48,6 @@ func GenPubkey(prikey []byte, typeChoose uint32) (pubkey []byte, ret uint16) {
 		break
 	case ECC_CURVE_BLS12381_G2_XMD_SHA_256_SSWU_RO_AUG , ECC_CURVE_BLS12381_G2_XMD_SHA_256_SSWU_RO_NUL:
 		pubkey, err = bls12_381.GenPublicKey(prikey)
-		break
-	case ECC_CURVE_ZIL_SECP256K1:
-		pubkey, err = genPublicKey(prikey, "secp256k1")
 		break
 	default:
 		return nil, ECC_WRONG_TYPE
@@ -358,7 +355,7 @@ func Point_mulBaseG(scalar []byte, typeChoose uint32) []byte {
 		return nil
 	}
 	switch typeChoose {
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		ret, _ := genPublicKey(scalar, "secp256k1")
 		return PointCompress(ret, typeChoose)
 		break
@@ -390,7 +387,7 @@ func Point_mulBaseG_add(pointin, scalar []byte, typeChoose uint32) (point []byte
 	}
 
 	switch typeChoose {
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		return MulBaseG_Add(pointin, scalar, "secp256k1")
 		break
 	case ECC_CURVE_SECP256R1:
@@ -441,7 +438,7 @@ func Point_add(point1, point2 []byte, typeChoose uint32) ([]byte, uint16) {
 		}
 	}
 	switch typeChoose {
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		point, is_infinity := Add(point1, point2, "secp256k1")
 		if is_infinity {
 			return nil, FAILURE
@@ -498,7 +495,7 @@ func Point_mul(pointin, scalar []byte, typeChoose uint32) ([]byte, uint16) {
 		}
 	}
 	switch typeChoose {
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		point, is_infinity := Mul(pointin, scalar, "secp256k1")
 		if is_infinity {
 			return nil, FAILURE
@@ -538,7 +535,7 @@ func Point_mul(pointin, scalar []byte, typeChoose uint32) ([]byte, uint16) {
 
 func GetCurveOrder(typeChoose uint32) []byte {
 	switch typeChoose {
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		order, _ := hex.DecodeString("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141")
 		return order
 		break
@@ -563,7 +560,7 @@ func GetCurveOrder(typeChoose uint32) []byte {
 
 
 func PointCompress(point []byte, typeChoose uint32) []byte {
-	if typeChoose != ECC_CURVE_SECP256K1 && typeChoose != ECC_CURVE_SECP256R1 && typeChoose != ECC_CURVE_SM2_STANDARD {
+	if typeChoose != ECC_CURVE_SECP256K1 && typeChoose != ECC_CURVE_ZIL_SECP256K1  && typeChoose != ECC_CURVE_SECP256R1 && typeChoose != ECC_CURVE_SM2_STANDARD {
 		return nil
 	}
 
@@ -591,7 +588,7 @@ func PointDecompress(point []byte, typeChoose uint32) []byte {
 		return nil
 	}
 	switch typeChoose {
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		ret, err := secp256k1_decompress(point)
 		if err != nil {
 			return nil
@@ -620,7 +617,7 @@ func PointDecompress(point []byte, typeChoose uint32) []byte {
 
 func RecoverPubkey(sig []byte, msg []byte, typeChoose uint32) ([]byte, uint16) {
 	switch typeChoose {
-	case ECC_CURVE_SECP256K1:
+	case ECC_CURVE_SECP256K1, ECC_CURVE_ZIL_SECP256K1:
 		pubkey, err := secp256k1_recover_public(sig, msg)
 		if err != nil {
 			return nil, FAILURE
