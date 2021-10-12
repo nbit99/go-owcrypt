@@ -19,7 +19,7 @@ import (
 	"crypto/sha512"
 	"crypto/subtle"
 	"errors"
-	"github.com/blocktree/go-owcrypt/eddsa/edwards25519"
+	"github.com/nbit99/go-owcrypt/eddsa/edwards25519"
 )
 
 var (

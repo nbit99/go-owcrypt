@@ -24,7 +24,7 @@ import (
 	"crypto/sha512"
 	"encoding/binary"
 	"errors"
-	"github.com/blocktree/go-owcrypt/sm3"
+	"github.com/nbit99/go-owcrypt/sm3"
 	"io"
 	"math/big"
 )

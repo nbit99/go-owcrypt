@@ -18,8 +18,8 @@ import "C"
 import (
 	"encoding/hex"
 	"errors"
-	"github.com/blocktree/go-owcrypt/bls12_381"
-	"github.com/blocktree/go-owcrypt/eddsa"
+	"github.com/nbit99/go-owcrypt/bls12_381"
+	"github.com/nbit99/go-owcrypt/eddsa"
 )
 
 func GenPubkey(prikey []byte, typeChoose uint32) (pubkey []byte, ret uint16) {

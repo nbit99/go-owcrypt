@@ -3,7 +3,7 @@ package bls12_381
 import (
 	"crypto/cipher"
 	"encoding/hex"
-	"github.com/blocktree/go-owcrypt/bls12_381/bls"
+	"github.com/nbit99/go-owcrypt/bls12_381/bls"
 	"io"
 
 	"github.com/drand/kyber"
