@@ -3,8 +3,6 @@ package eddsa
 import (
 	"bytes"
 	"crypto/rand"
-	"encoding/hex"
-	"fmt"
 	"github.com/nbit99/go-owcrypt/eddsa/edwards25519"
 	"github.com/nbit99/go-owcrypt/sha3"
 )
@@ -39,7 +37,6 @@ func Ed25519Nem_sign(privateKey []byte, message []byte) ([]byte, error) {
 	if err != nil {
 		return nil, ErrPrivateKeyIllegal
 	}
-	fmt.Println(hex.EncodeToString(pubkey))
 
 	var  messageDigest, hramDigest [64]byte
 	var expandedSecretKey, digest1 [32]byte
@@ -61,8 +58,6 @@ func Ed25519Nem_sign(privateKey []byte, message []byte) ([]byte, error) {
 	edwards25519.ScReduce(&messageDigestReduced, &messageDigest)
 	var R edwards25519.ExtendedGroupElement
 	edwards25519.GeScalarMultBase(&R, &messageDigestReduced)
-
-	fmt.Println(hex.EncodeToString(messageDigestReduced[:]))
 
 	var encodedR [32]byte
 	R.ToBytes(&encodedR)
