@@ -53,6 +53,9 @@ func GenPubkey(prikey []byte, typeChoose uint32) (pubkey []byte, ret uint16) {
 	case ECC_CURVE_PASTA:
 		pubkey, err = pasta.GenPublicKey(prikey)
 		break
+	case ECC_CURVE_ED25519_NEM:
+		pubkey, err = eddsa.Ed25519Nem_genPub(prikey)
+		break
 	default:
 		return nil, ECC_WRONG_TYPE
 	}
@@ -110,6 +113,8 @@ func Signature(prikey []byte, ID []byte, message []byte, typeChoose uint32) (sig
 	case ECC_CURVE_PASTA:
 		signature, err = pasta.Sign(prikey, message)
 		break
+	case ECC_CURVE_ED25519_NEM:
+		signature, err = eddsa.Ed25519Nem_sign(prikey, message)
 	default:
 		return nil, 0, ECC_WRONG_TYPE
 	}
@@ -192,6 +197,8 @@ func Verify(pubkey []byte, ID []byte, message []byte, signature []byte, typeChoo
 	case ECC_CURVE_PASTA:
 		pass = pasta.Verify(pubkey, message, signature)
 		break
+	case ECC_CURVE_ED25519_NEM:
+		pass = eddsa.Ed25519Nem_verify(pubkey, message, signature)
 	default:
 		return ECC_WRONG_TYPE
 	}
@@ -381,6 +388,10 @@ func Point_mulBaseG(scalar []byte, typeChoose uint32) []byte {
 		ret, _ := eddsa.ED25519_genPub(scalar)
 		return ret
 		break
+	case ECC_CURVE_ED25519_NEM:
+		ret, _ := eddsa.Ed25519Nem_genPub(scalar)
+		return ret
+		break
 	case ECC_CURVE_BLS12381_G2_XMD_SHA_256_SSWU_RO_NUL, ECC_CURVE_BLS12381_G2_XMD_SHA_256_SSWU_RO_AUG:
 		ret, _ := bls12_381.GenPublicKey(scalar)
 		return ret
@@ -410,7 +421,7 @@ func Point_mulBaseG_add(pointin, scalar []byte, typeChoose uint32) (point []byte
 	case ECC_CURVE_SM2_STANDARD:
 		return MulBaseG_Add(pointin, scalar, "sm2_std")
 		break
-	case ECC_CURVE_ED25519:
+	case ECC_CURVE_ED25519, ECC_CURVE_ED25519_NEM:
 		var point1, s, point2 [32]byte
 		copy(point1[:], pointin)
 		copy(s[:], scalar)
@@ -433,7 +444,7 @@ func Point_mulBaseG_add(pointin, scalar []byte, typeChoose uint32) (point []byte
 }
 
 func Point_add(point1, point2 []byte, typeChoose uint32) ([]byte, uint16) {
-	if typeChoose == ECC_CURVE_ED25519 {
+	if typeChoose == ECC_CURVE_ED25519 || typeChoose == ECC_CURVE_ED25519_NEM {
 		if len(point1) != 32 || len(point2) != 32 {
 			return nil, FAILURE
 		}
@@ -476,7 +487,7 @@ func Point_add(point1, point2 []byte, typeChoose uint32) ([]byte, uint16) {
 		}
 		return point, SUCCESS
 		break
-	case ECC_CURVE_ED25519:
+	case ECC_CURVE_ED25519, ECC_CURVE_ED25519_NEM:
 		var P1, P2, P [32]byte
 		copy(P1[:], point1)
 		copy(P2[:], point2)
@@ -497,7 +508,7 @@ func Point_add(point1, point2 []byte, typeChoose uint32) ([]byte, uint16) {
 }
 
 func Point_mul(pointin, scalar []byte, typeChoose uint32) ([]byte, uint16) {
-	if typeChoose == ECC_CURVE_ED25519 {
+	if typeChoose == ECC_CURVE_ED25519 || typeChoose == ECC_CURVE_ED25519_NEM {
 		if len(pointin) != 32 || len(scalar) != 32 {
 			return nil, FAILURE
 		}
@@ -570,7 +581,7 @@ func GetCurveOrder(typeChoose uint32) []byte {
 		order, _ := hex.DecodeString("FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123")
 		return order
 		break
-	case ECC_CURVE_ED25519:
+	case ECC_CURVE_ED25519, ECC_CURVE_ED25519_NEM:
 		order, _  := hex.DecodeString("1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed")
 		return order
 		break
